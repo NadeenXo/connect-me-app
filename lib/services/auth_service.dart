@@ -85,6 +85,31 @@ class AuthService {
     }
   }
 
+  Future<String> getCurrentUserFullName() async {
+    final user = _firebaseAuth.currentUser;
+
+    if (user == null) {
+      return 'User';
+    }
+
+    try {
+      final document = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (!document.exists) {
+        return user.email ?? 'User';
+      }
+
+      final data = document.data();
+
+      return data?['fullName']?.toString() ?? user.email ?? 'User';
+    } catch (_) {
+      return user.email ?? 'User';
+    }
+  }
+
   String _getAuthErrorMessage(FirebaseAuthException error) {
     switch (error.code) {
       case 'invalid-email':

@@ -6,6 +6,7 @@ import '../../injection.dart';
 import '../blocs/auth_cubit.dart';
 import '../blocs/post_cubit.dart';
 import '../widgets/post_card.dart';
+import '../../services/auth_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -27,8 +28,11 @@ class _HomeView extends StatelessWidget {
     final firebaseUser = FirebaseAuth.instance.currentUser;
 
     if (firebaseUser == null) {
+      contentController.dispose();
       return;
     }
+
+    final authorName = await AuthService().getCurrentUserFullName();
 
     await showDialog<void>(
       context: context,
@@ -60,8 +64,7 @@ class _HomeView extends StatelessWidget {
 
                 await context.read<PostCubit>().addPost(
                   authorId: firebaseUser.uid,
-                  authorName:
-                      firebaseUser.displayName ?? firebaseUser.email ?? 'User',
+                  authorName: authorName,
                   content: content,
                 );
 
