@@ -1,3 +1,5 @@
+import 'package:connectme_app/presentation/screens/map_screen.dart';
+import 'package:connectme_app/presentation/screens/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import '../blocs/auth_cubit.dart';
 import '../blocs/post_cubit.dart';
 import '../widgets/post_card.dart';
 import '../../services/auth_service.dart';
+import '../../services/biometric_service.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -89,6 +92,21 @@ class _HomeView extends StatelessWidget {
         title: const Text('ConnectMe'),
         actions: [
           IconButton(
+            tooltip: 'Community Map',
+            onPressed: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const MapScreen()));
+            },
+            icon: const Icon(Icons.map),
+          ),
+          IconButton(
+            tooltip: 'Profile',
+            onPressed: () => _openProfile(context),
+            icon: const Icon(Icons.person),
+          ),
+          IconButton(
+            tooltip: 'Logout',
             onPressed: () {
               context.read<AuthCubit>().logout();
             },
@@ -135,5 +153,28 @@ class _HomeView extends StatelessWidget {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  Future<void> _openProfile(BuildContext context) async {
+    final biometricService = getIt<BiometricService>();
+
+    final authenticated = await biometricService.authenticate();
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (!authenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Biometric authentication failed or is not available.'),
+        ),
+      );
+      return;
+    }
+
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
   }
 }

@@ -1,3 +1,5 @@
+import 'package:connectme_app/presentation/blocs/profile_cubit.dart';
+import 'package:connectme_app/services/biometric_service.dart';
 import 'package:get_it/get_it.dart';
 
 import 'data/datasources/firestore_post_datasource.dart';
@@ -40,4 +42,8 @@ void setupDependencies() {
     () =>
         PostCubit(getPosts: getIt<GetPosts>(), createPost: getIt<CreatePost>()),
   );
+
+  getIt.registerFactory<ProfileCubit>(() => ProfileCubit());
+
+  getIt.registerLazySingleton<BiometricService>(() => BiometricService());
 }
