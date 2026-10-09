@@ -105,7 +105,7 @@ class AuthService {
       case 'network-request-failed':
         return 'Please check your internet connection.';
       default:
-        return 'Authentication failed. Please try again.';
+        return 'Firebase error: ${error.code} - ${error.message}';
     }
   }
 }
