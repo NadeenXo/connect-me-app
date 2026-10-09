@@ -53,7 +53,14 @@ class _ProfileViewState extends State<_ProfileView> {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: SafeArea(
-        child: BlocBuilder<ProfileCubit, ProfileState>(
+        child: BlocConsumer<ProfileCubit, ProfileState>(
+          listener: (context, state) {
+            if (state is ProfilePhotoUpdateError) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
           builder: (context, state) {
             if (state is ProfileLoading || state is ProfileInitial) {
               return const Center(child: CircularProgressIndicator());
@@ -68,63 +75,71 @@ class _ProfileViewState extends State<_ProfileView> {
               );
             }
 
+            ProfileLoaded? profile;
+
             if (state is ProfileLoaded) {
-              return SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: horizontalPadding,
-                  vertical: 24,
-                ),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 55,
-                      backgroundImage:
-                          state.profileImageUrl != null &&
-                              state.profileImageUrl!.isNotEmpty
-                          ? NetworkImage(state.profileImageUrl!)
-                          : null,
-                      child:
-                          state.profileImageUrl == null ||
-                              state.profileImageUrl!.isEmpty
-                          ? const Icon(Icons.person, size: 55)
-                          : null,
-                    ),
-                    const SizedBox(height: 16),
-                    FilledButton.icon(
-                      onPressed: _pickProfileImage,
-                      icon: const Icon(Icons.photo_library),
-                      label: const Text('Update Profile Photo'),
-                    ),
-                    const SizedBox(height: 32),
-                    _ProfileInfoTile(
-                      icon: Icons.person,
-                      title: 'Full Name',
-                      value: state.fullName,
-                    ),
-                    const SizedBox(height: 12),
-                    _ProfileInfoTile(
-                      icon: Icons.email,
-                      title: 'Email',
-                      value: state.email,
-                    ),
-                    const SizedBox(height: 12),
-                    _ProfileInfoTile(
-                      icon: Icons.phone_android,
-                      title: 'Device Model',
-                      value: state.deviceModel,
-                    ),
-                    const SizedBox(height: 12),
-                    _ProfileInfoTile(
-                      icon: Icons.settings,
-                      title: 'OS Version',
-                      value: state.osVersion,
-                    ),
-                  ],
-                ),
-              );
+              profile = state;
+            } else if (state is ProfilePhotoUpdateError) {
+              profile = state.previousProfile;
             }
 
-            return const SizedBox.shrink();
+            if (profile == null) {
+              return const SizedBox.shrink();
+            }
+
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: 24,
+              ),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 55,
+                    backgroundImage:
+                        profile.profileImageUrl != null &&
+                            profile.profileImageUrl!.isNotEmpty
+                        ? NetworkImage(profile.profileImageUrl!)
+                        : null,
+                    child:
+                        profile.profileImageUrl == null ||
+                            profile.profileImageUrl!.isEmpty
+                        ? const Icon(Icons.person, size: 55)
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                    onPressed: _pickProfileImage,
+                    icon: const Icon(Icons.photo_library),
+                    label: const Text('Update Profile Photo'),
+                  ),
+                  const SizedBox(height: 32),
+                  _ProfileInfoTile(
+                    icon: Icons.person,
+                    title: 'Full Name',
+                    value: profile.fullName,
+                  ),
+                  const SizedBox(height: 12),
+                  _ProfileInfoTile(
+                    icon: Icons.email,
+                    title: 'Email',
+                    value: profile.email,
+                  ),
+                  const SizedBox(height: 12),
+                  _ProfileInfoTile(
+                    icon: Icons.phone_android,
+                    title: 'Device Model',
+                    value: profile.deviceModel,
+                  ),
+                  const SizedBox(height: 12),
+                  _ProfileInfoTile(
+                    icon: Icons.settings,
+                    title: 'OS Version',
+                    value: profile.osVersion,
+                  ),
+                ],
+              ),
+            );
           },
         ),
       ),

@@ -34,6 +34,16 @@ class ProfileError extends ProfileState {
   ProfileError(this.message);
 }
 
+class ProfilePhotoUpdateError extends ProfileState {
+  final String message;
+  final ProfileLoaded previousProfile;
+
+  ProfilePhotoUpdateError({
+    required this.message,
+    required this.previousProfile,
+  });
+}
+
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileInitial());
 
@@ -118,7 +128,10 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
     } catch (_) {
       emit(
-        ProfileError('Unable to update your profile photo. Please try again.'),
+        ProfilePhotoUpdateError(
+          message: 'Unable to update your profile photo. Please try again.',
+          previousProfile: currentState,
+        ),
       );
     }
   }

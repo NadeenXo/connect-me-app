@@ -10,6 +10,7 @@ import 'domain/usecases/create_post.dart';
 import 'domain/usecases/get_posts.dart';
 import 'presentation/blocs/post_cubit.dart';
 import 'services/firestore_service.dart';
+import 'services/auth_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -46,4 +47,6 @@ void setupDependencies() {
   getIt.registerFactory<ProfileCubit>(() => ProfileCubit());
 
   getIt.registerLazySingleton<BiometricService>(() => BiometricService());
+
+  getIt.registerLazySingleton<AuthService>(() => AuthService());
 }

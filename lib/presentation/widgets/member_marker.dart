@@ -1,4 +1,3 @@
-
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MemberMarker {
@@ -20,10 +19,7 @@ class MemberMarker {
     return Marker(
       markerId: MarkerId(id),
       position: LatLng(latitude, longitude),
-      infoWindow: InfoWindow(
-        title: name,
-        snippet: city,
-      ),
+      infoWindow: InfoWindow(title: name, snippet: city),
     );
   }
 }

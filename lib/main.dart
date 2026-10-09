@@ -25,7 +25,8 @@ class ConnectMeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AuthCubit(AuthService())..checkAuthenticationStatus(),
+      create: (_) =>
+          AuthCubit(getIt<AuthService>())..checkAuthenticationStatus(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'ConnectMe',

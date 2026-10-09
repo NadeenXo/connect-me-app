@@ -42,9 +42,7 @@ class MapScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Community Map'),
-      ),
+      appBar: AppBar(title: const Text('Community Map')),
       body: GoogleMap(
         initialCameraPosition: _initialCameraPosition,
         markers: _buildMarkers(),

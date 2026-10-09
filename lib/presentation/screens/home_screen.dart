@@ -35,7 +35,7 @@ class _HomeView extends StatelessWidget {
       return;
     }
 
-    final authorName = await AuthService().getCurrentUserFullName();
+    final authorName = await getIt<AuthService>().getCurrentUserFullName();
 
     await showDialog<void>(
       context: context,
