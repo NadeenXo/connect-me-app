@@ -61,7 +61,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       return;
     }
 
-    String fullName = user.displayName ?? 'User';
+    String fullName = user.displayName ?? '';
     String? profileImageUrl;
 
     try {
@@ -73,13 +73,18 @@ class ProfileCubit extends Cubit<ProfileState> {
       final userData = userDocument.data();
 
       if (userData != null) {
-        fullName = userData['fullName']?.toString() ?? fullName;
+        final firestoreName = userData['fullName']?.toString().trim();
+
+        if (firestoreName != null && firestoreName.isNotEmpty) {
+          fullName = firestoreName;
+        }
 
         profileImageUrl = userData['profileImageUrl']?.toString();
       }
-    } catch (_) {
-      // Keep Firebase Auth values if the Firestore profile
-      // cannot be loaded.
+    } catch (_) {}
+
+    if (fullName.isEmpty) {
+      fullName = user.email?.split('@').first ?? 'User';
     }
 
     String deviceModel = 'Unknown device';
@@ -90,9 +95,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       deviceModel = deviceInformation.$1;
       osVersion = deviceInformation.$2;
-    } catch (_) {
-      // Keep fallback device information.
-    }
+    } catch (_) {}
 
     emit(
       ProfileLoaded(
@@ -135,6 +138,8 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       await _firestore.collection('users').doc(user.uid).set({
         'profileImageUrl': downloadUrl,
+        'fullName': currentState.fullName,
+        'email': currentState.email,
       }, SetOptions(merge: true));
 
       emit(

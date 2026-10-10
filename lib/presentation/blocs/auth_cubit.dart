@@ -35,28 +35,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // Future<void> signUp({
-  //   required String email,
-  //   required String password,
-  // }) async {
-  //   emit(AuthLoading());
-
-  //   try {
-  //     await authService.signUp(
-  //       email: email,
-  //       password: password,
-  //     );
-
-  //     emit(AuthAuthenticated());
-  //   } catch (error) {
-  //     emit(
-  //       AuthError(
-  //         error.toString().replaceFirst('Exception: ', ''),
-  //       ),
-  //     );
-  //   }
-  // }
-
   Future<void> signUp({
     required String fullName,
     required String email,
