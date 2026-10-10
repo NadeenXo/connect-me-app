@@ -75,29 +75,42 @@ Screen
 
 ## Screenshots
 
+## Screenshots
+
 ### Login
-![Login](screenshots/login.png)
+
+![Login](screenshots/Screenshot%202026-10-09%20205607.png)
 
 ### Sign Up
-![Sign Up](screenshots/signup.png)
+
+![Sign Up](screenshots/Screenshot%202026-10-09%20205615.png)
 
 ### Home Feed
-![Home Feed](screenshots/home_feed.png)
+
+![Home Feed](screenshots/Screenshot%202026-10-09%20220142.png)
 
 ### Biometric Authentication
-![Biometric Authentication](screenshots/biometric_prompt.png)
+
+![Biometric Authentication](screenshots/Screenshot_20261010-231804%20%281%29.jpg)
 
 ### Profile
-![Profile](screenshots/profile.png)
+
+The Profile screen shows the user's full name, email, device model, and Android OS version.
+
+![Profile](screenshots/Screenshot_20261010-234141.jpg)
 
 ### Community Map
-![Community Map](screenshots/community_map.png)
+
+The map contains community member markers. Tapping a marker displays the member's name and city.
+
+![Community Map](screenshots/Screenshot%202026-10-09%20223021.png)
 
 ### Firebase App Distribution
-![Firebase App Distribution](screenshots/app_distribution.png)
 
-### Tester Invitation
-![Tester Invitation](screenshots/tester_invitation.png)
+The Android release was uploaded to Firebase App Distribution and sent to two testers.
+
+![Firebase App Distribution](screenshots/image.png)
+
 
 ## Firebase App Distribution
 
@@ -122,13 +135,6 @@ Then:
 5. Distribute the build
 6. Take screenshots of the release dashboard and tester invitation email
 
-## Final Checks
-
-```bash
-dart format .
-flutter analyze
-flutter build apk --release
-```
 
 ## Deliverables
 
