@@ -37,6 +37,11 @@ class _HomeView extends StatelessWidget {
 
     final authorName = await getIt<AuthService>().getCurrentUserFullName();
 
+    if (!context.mounted) {
+      contentController.dispose();
+      return;
+    }
+
     await showDialog<void>(
       context: context,
       builder: (dialogContext) {
