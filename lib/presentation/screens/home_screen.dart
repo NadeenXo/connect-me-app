@@ -27,24 +27,23 @@ class _HomeView extends StatelessWidget {
   const _HomeView();
 
   Future<void> _showCreatePostDialog(BuildContext context) async {
-    final contentController = TextEditingController();
     final firebaseUser = FirebaseAuth.instance.currentUser;
 
     if (firebaseUser == null) {
-      contentController.dispose();
       return;
     }
 
     final authorName = await getIt<AuthService>().getCurrentUserFullName();
 
     if (!context.mounted) {
-      contentController.dispose();
       return;
     }
 
-    await showDialog<void>(
+    final content = await showDialog<String>(
       context: context,
       builder: (dialogContext) {
+        final contentController = TextEditingController();
+
         return AlertDialog(
           title: const Text('Create Post'),
           content: TextField(
@@ -63,22 +62,14 @@ class _HomeView extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             FilledButton(
-              onPressed: () async {
-                final content = contentController.text.trim();
+              onPressed: () {
+                final text = contentController.text.trim();
 
-                if (content.isEmpty) {
+                if (text.isEmpty) {
                   return;
                 }
 
-                await context.read<PostCubit>().addPost(
-                  authorId: firebaseUser.uid,
-                  authorName: authorName,
-                  content: content,
-                );
-
-                if (dialogContext.mounted) {
-                  Navigator.of(dialogContext).pop();
-                }
+                Navigator.of(dialogContext).pop(text);
               },
               child: const Text('Post'),
             ),
@@ -87,7 +78,19 @@ class _HomeView extends StatelessWidget {
       },
     );
 
-    contentController.dispose();
+    if (content == null || content.isEmpty) {
+      return;
+    }
+
+    if (!context.mounted) {
+      return;
+    }
+
+    await context.read<PostCubit>().addPost(
+      authorId: firebaseUser.uid,
+      authorName: authorName,
+      content: content,
+    );
   }
 
   @override

@@ -54,14 +54,17 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> loadProfile() async {
     emit(ProfileLoading());
 
+    final user = _firebaseAuth.currentUser;
+
+    if (user == null) {
+      emit(ProfileError('No signed-in user was found.'));
+      return;
+    }
+
+    String fullName = user.displayName ?? 'User';
+    String? profileImageUrl;
+
     try {
-      final user = _firebaseAuth.currentUser;
-
-      if (user == null) {
-        emit(ProfileError('No signed-in user was found.'));
-        return;
-      }
-
       final userDocument = await _firestore
           .collection('users')
           .doc(user.uid)
@@ -69,20 +72,37 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final userData = userDocument.data();
 
+      if (userData != null) {
+        fullName = userData['fullName']?.toString() ?? fullName;
+
+        profileImageUrl = userData['profileImageUrl']?.toString();
+      }
+    } catch (_) {
+      // Keep Firebase Auth values if the Firestore profile
+      // cannot be loaded.
+    }
+
+    String deviceModel = 'Unknown device';
+    String osVersion = 'Unknown OS';
+
+    try {
       final deviceInformation = await _getDeviceInformation();
 
-      emit(
-        ProfileLoaded(
-          fullName: userData?['fullName']?.toString() ?? 'User',
-          email: user.email ?? 'No email available',
-          profileImageUrl: userData?['profileImageUrl']?.toString(),
-          deviceModel: deviceInformation.$1,
-          osVersion: deviceInformation.$2,
-        ),
-      );
+      deviceModel = deviceInformation.$1;
+      osVersion = deviceInformation.$2;
     } catch (_) {
-      emit(ProfileError('Unable to load your profile. Please try again.'));
+      // Keep fallback device information.
     }
+
+    emit(
+      ProfileLoaded(
+        fullName: fullName,
+        email: user.email ?? 'No email available',
+        profileImageUrl: profileImageUrl,
+        deviceModel: deviceModel,
+        osVersion: osVersion,
+      ),
+    );
   }
 
   Future<void> updateProfilePhoto(XFile image) async {
@@ -113,9 +133,9 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final downloadUrl = await storageReference.getDownloadURL();
 
-      await _firestore.collection('users').doc(user.uid).update({
+      await _firestore.collection('users').doc(user.uid).set({
         'profileImageUrl': downloadUrl,
-      });
+      }, SetOptions(merge: true));
 
       emit(
         ProfileLoaded(

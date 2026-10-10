@@ -114,24 +114,9 @@ Firebase / Local Source
 
 The Builder Pattern is used to construct the user profile step by step during sign up.
 
-Example:
-
-```dart
-final userModel = UserBuilder()
-    .setId(firebaseUser.uid)
-    .setFullName(fullName)
-    .setEmail(email)
-    .build();
-```
-
 ### Factory Pattern
 
 The Factory Pattern is used by the post repository to select the correct post data source.
-
-```text
-Remote → Cloud Firestore
-Local  → Local cache
-```
 
 ### Singleton Pattern
 
@@ -161,16 +146,6 @@ Firebase errors are converted into user-friendly UI messages.
 ## Firestore Posts
 
 Community posts are stored in Cloud Firestore.
-
-Each post contains:
-
-```text
-id
-authorId
-authorName
-content
-createdAt
-```
 
 The Home Feed listens to Firestore in real time using `PostCubit`.
 
